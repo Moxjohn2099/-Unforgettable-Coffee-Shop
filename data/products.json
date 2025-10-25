@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Ethiopian Yirgacheffe",
+    "price": 18.99,
+    "image": "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80",
+    "description": "Bright, floral notes with a citrusy finish. A classic Ethiopian coffee.",
+    "category": "single-origin",
+    "stock": 50
+  },
+  {
+    "id": 2,
+    "name": "Colombian Supremo",
+    "price": 16.99,
+    "image": "https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+    "description": "Well-balanced with notes of caramel and nuts. A crowd-pleaser.",
+    "category": "single-origin",
+    "stock": 45
+  },
+  {
+    "id": 3,
+    "name": "Sumatra Mandheling",
+    "price": 19.99,
+    "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+    "description": "Full-bodied with earthy tones and low acidity. A bold choice.",
+    "category": "single-origin",
+    "stock": 30
+  },
+  {
+    "id": 4,
+    "name": "Guatemalan Antigua",
+    "price": 17.99,
+    "image": "https://images.unsplash.com/photo-1568649929103-28ffbefaca1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+    "description": "Chocolatey with a spicy finish. A complex and satisfying brew.",
+    "category": "single-origin",
+    "stock": 40
+  }
+]
