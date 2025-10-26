@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unforgettable Coffee Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #8B4513;
+            --secondary-color: #D2691E;
+            --accent-color: #F4A460;
+            --light-color: #F5F5DC;
+            --dark-color: #3E2723;
+            --text-color: #333;
+            --white: #fff;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--white);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .nav-icons a {
+            color: var(--white);
+            font-size: 1.2rem;
+            transition: color 0.3s;
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .nav-icons a:hover {
+            color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cart-count {
+            background: var(--accent-color);
+            color: var(--dark-color);
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-weight: bold;
+        }
+
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: var(--white);
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: var(--dark-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .user-greeting {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            color: var(--primary-color);
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+
+        /* Login & Register Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .modal-content h3 {
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-form input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        /* Profile Page */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-group {
+            margin-bottom: 1rem;
+        }
+
+        .info-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .info-group .info-value {
+            padding: 0.8rem;
+            background: var(--light-color);
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-disabled:hover {
+            background-color: #ccc;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Featured Products */
+        .section-title {
+            text-align: center;
+            margin: 3rem 0 2rem;
+            font-size: 2.5rem;
+            color: var(--dark-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+            margin: 0.5rem auto;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* About Section */
+        .about {
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 4rem 0;
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 4rem 0;
+            background-color: var(--light-color);
+        }
+
+        .testimonial-container {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+
+        .testimonial-card {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .author-info h4 {
+            margin-bottom: 0.2rem;
+        }
+
+        .author-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 4rem 0;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .contact-info h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark-color);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-item i {
+            color: var(--primary-color);
+            width: 20px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: var(--light-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            color: var(--white);
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--accent-color);
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 350px;
+            height: 100%;
+            background-color: var(--white);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-header h3 {
+            color: var(--dark-color);
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .cart-items {
+            padding: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quantity-btn {
+            background-color: #f0f0f0;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-total {
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        .checkout-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Checkout Modal */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .checkout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checkout-header h3 {
+            color: var(--dark-color);
+        }
+
+        .close-checkout {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .checkout-form {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .checkout-summary {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .checkout-summary h4 {
+            margin-bottom: 1rem;
+        }
+
+        .checkout-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+            text-align: right;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 5px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Blog */
+        .blog-posts {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .blog-content {
+            padding: 1.5rem;
+        }
+
+        .blog-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav ul li {
+                margin-left: 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-modal {
+                width: 100%;
+            }
+
+            .checkout-modal {
+                width: 95%;
+            }
+
+            .dropdown-content {
+                right: -50px;
+            }
+
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">Unforgettable <span>Coffee</span></a>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link" data-page="home">HOME</a></li>
+                    <li><a href="#" class="nav-link" data-page="about">ABOUT</a></li>
+                    <li><a href="#" class="nav-link" data-page="shop">SHOP</a></li>
+                    <li><a href="#" class="nav-link" data-page="blog">BLOG</a></li>
+                    <li><a href="#" class="nav-link" data-page="contact">CONTACT US</a></li>
+                </ul>
+            </nav>
+            <div class="nav-icons">
+                <a href="#" id="search-btn"><i class="fas fa-search"></i></a>
+                
+                <!-- USER ACCOUNT DROPDOWN -->
+                <div class="user-dropdown">
+                    <a href="#" id="user-btn"><i class="fas fa-user"></i></a>
+                    <div class="dropdown-content" id="user-dropdown">
+                        <a href="#" id="login-btn">Login</a>
+                        <a href="#" id="register-btn">Register</a>
+                        <div id="user-menu" style="display: none;">
+                            <a href="#" id="profile-btn">My Profile</a>
+                            <a href="#" id="orders-btn">My Orders</a>
+                            <a href="#" id="logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#" id="cart-btn"><i class="fas fa-shopping-cart"></i></a>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <section id="home-page" class="page active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container hero-content">
+                <h1>Time to Discover Coffee House</h1>
+                <p>The coffee is brewed by first roasting the green coffee beans over hot coals in a brazier. Given an opportunity to sample.</p>
+                <a href="#" class="btn nav-link" data-page="shop">LEARN MORE</a>
+            </div>
+        </section>
+
+        <!-- Featured Products -->
+        <section class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="products" id="products-container">
+                <!-- Products loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- About Preview -->
+        <section class="about">
+            <div class="container about-content">
+                <div class="about-text">
+                    <h2>About Unforgettable Coffee</h2>
+                    <p>We source the finest coffee beans from sustainable farms around the world. Our master roasters carefully craft each batch to bring out the unique flavors and aromas that make our coffee unforgettable.</p>
+                    <a href="#" class="btn nav-link" data-page="about">OUR STORY</a>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80" alt="Coffee beans">
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <div class="container">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <div class="testimonial-container" id="testimonials-container">
+                    <!-- Testimonials loaded dynamically -->
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- About Page -->
+    <section id="about-page" class="page">
+        <div class="container">
+            <h2 class="section-title">Our Story</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>From Humble Beginnings</h3>
+                    <p>Unforgettable Coffee began in 2010 with a simple mission: to bring the world's finest coffee beans directly to your cup. Our founder, Mark John Azores, traveled across coffee-growing regions to establish relationships with sustainable farms.</p>
+                    <p>Today, we continue that tradition of excellence, working directly with farmers in Ethiopia, Colombia, Guatemala, and beyond to ensure fair trade practices and exceptional quality.</p>
+                    <h3>Our Roasting Process</h3>
+                    <p>Each batch of beans is carefully roasted in small quantities to bring out their unique characteristics. Our master roasters have decades of experience and use both traditional and modern techniques to achieve the perfect roast profile for each variety.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Coffee roasting">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Page -->
+    <section id="shop-page" class="page">
+        <div class="container">
+            <h2 class="section-title">Our Coffee Selection</h2>
+            <div class="products" id="shop-products-container">
+                <!-- All products loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Page -->
+    <section id="blog-page" class="page">
+        <div class="container">
+            <h2 class="section-title">Coffee Blog</h2>
+            <div class="blog-posts" id="blog-posts-container">
+                <!-- Blog posts loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Page -->
+    <section id="contact-page" class="page">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>123 Coffee Street, Brew City, BC 12345</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>info@unforgettablecoffee.com</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Monday - Friday: 7am - 9pm<br>Weekend: 8am - 10pm</p>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Page -->
+    <section id="profile-page" class="page">
+        <div class="container">
+            <h2 class="section-title">My Profile</h2>
+            <div class="profile-container" id="profile-container">
+                <!-- Profile content loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Unforgettable Coffee</h3>
+                    <p>Brewing exceptional coffee experiences since 2010. We're passionate about bringing you the finest beans from around the world.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+                        <li><a href="#" class="nav-link" data-page="about">About Us</a></li>
+                        <li><a href="#" class="nav-link" data-page="shop">Shop</a></li>
+                        <li><a href="#" class="nav-link" data-page="blog">Blog</a></li>
+                        <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Returns & Refunds</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to get special offers and brewing tips</p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit" class="btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Unforgettable Coffee Shop. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-cart" id="close-cart">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be added here -->
+        </div>
+        <div class="cart-total">
+            <span>Total:</span>
+            <span id="cart-total-price">$0.00</span>
+        </div>
+        <button class="checkout-btn" id="checkout-btn">Proceed to Checkout</button>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkout-modal">
+        <div class="checkout-header">
+            <h3>Checkout</h3>
+            <button class="close-checkout" id="close-checkout">&times;</button>
+        </div>
+        <form class="checkout-form" id="checkout-form">
+            <div class="form-group">
+                <label for="checkout-name">Full Name</label>
+                <input type="text" id="checkout-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="checkout-email">Email</label>
+                <input type="email" id="checkout-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="checkout-phone">Phone Number</label>
+                <input type="tel" id="checkout-phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="checkout-address">Shipping Address</label>
+                <textarea id="checkout-address" name="address" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="checkout-payment">Payment Method</label>
+                <select id="checkout-payment" name="payment" required>
+                    <option value="">Select Payment</option>
+                    <option value="credit">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="cod">Cash on Delivery</option>
+                </select>
+            </div>
+            <div class="checkout-summary">
+                <h4>Order Summary</h4>
+                <div id="checkout-items"></div>
+                <div class="checkout-total">
+                    <strong>Total: <span id="checkout-total">$0.00</span></strong>
+                </div>
+            </div>
+            <button type="submit" class="btn">Place Order</button>
+        </form>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <h3>Welcome Back</h3>
+            <form class="auth-form" id="login-form">
+                <input type="text" placeholder="Username or Email" id="login-username" required>
+                <input type="password" placeholder="Password" id="login-password" required>
+                
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Don't have an account? <a href="#" id="show-register-from-login">Register here</a></p>
+            </div>
+            
+            <button class="close-modal" id="close-login">&times;</button>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <h3>Create Account</h3>
+            <form class="auth-form" id="register-form">
+                <input type="text" placeholder="Full Name" id="register-name" required>
+                <input type="text" placeholder="Username" id="register-username" required>
+                <input type="email" placeholder="Email Address" id="register-email" required>
+                <input type="password" placeholder="Password" id="register-password" required>
+                <input type="password" placeholder="Confirm Password" id="register-confirm-password" required>
+                
+                <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Already have an account? <a href="#" id="show-login-from-register">Login here</a></p>
+            </div>
+            
+            <button class="close-modal" id="close-register">&times;</button>
+        </div>
+    </div>
+
+    <script>
+        // Product data with different images - FIXED KENYAN AA IMAGE
+        const products = [
+            {
+                id: 1,
+                name: "Ethiopian Yirgacheffe",
+                price: 18.99,
+                image: "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80",
+                description: "Bright, floral notes with a citrusy finish. A classic Ethiopian coffee.",
+                category: "single-origin"
+            },
+            {
+                id: 2,
+                name: "Colombian Supremo",
+                price: 16.99,
+                image: "https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+                description: "Well-balanced with notes of caramel and nuts. A crowd-pleaser.",
+                category: "single-origin"
+            },
+            {
+                id: 3,
+                name: "Sumatra Mandheling",
+                price: 19.99,
+                image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+                description: "Full-bodied with earthy tones and low acidity. A bold choice.",
+                category: "single-origin"
+            },
+            {
+                id: 4,
+                name: "Guatemalan Antigua",
+                price: 17.99,
+                image: "https://images.unsplash.com/photo-1568649929103-28ffbefaca1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+                description: "Chocolatey with a spicy finish. A complex and satisfying brew.",
+                category: "single-origin"
+            },
+            {
+                id: 5,
+                name: "Costa Rican Tarrazu",
+                price: 20.99,
+                image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1035&q=80",
+                description: "Bright and clean with fruity notes. A premium Central American coffee.",
+                category: "single-origin"
+            },
+            {
+                id: 6,
+                name: "Italian Roast Espresso",
+                price: 15.99,
+                image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1167&q=80",
+                description: "Dark roast with intense flavor. Perfect for espresso lovers.",
+                category: "blends"
+            },
+            {
+                id: 7,
+                name: "Brazilian Santos",
+                price: 14.99,
+                image: "https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80",
+                description: "Smooth and nutty with low acidity. A great everyday coffee.",
+                category: "single-origin"
+            },
+            {
+                id: 8,
+                name: "Kenyan AA",
+                price: 22.99,
+                image: "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80",
+                description: "Bright and wine-like with berry notes. A sophisticated African coffee.",
+                category: "single-origin"
+            }
+        ];
+
+        // Testimonials data
+        const testimonials = [
+            {
+                name: "Sarah Johnson",
+                role: "Coffee Enthusiast",
+                text: "The best coffee I've ever had! The aroma and flavor are simply unforgettable. I'm a customer for life!",
+                avatar: "https://randomuser.me/api/portraits/women/32.jpg"
+            },
+            {
+                name: "Michael Torres",
+                role: "Professional Barista",
+                text: "As a barista for 10 years, I'm very particular about my coffee. Unforgettable Coffee exceeds all my expectations.",
+                avatar: "https://randomuser.me/api/portraits/men/54.jpg"
+            },
+            {
+                name: "Emily Chen",
+                role: "Regular Customer",
+                text: "I order their coffee beans monthly. The quality is consistently excellent, and their customer service is outstanding.",
+                avatar: "https://randomuser.me/api/portraits/women/68.jpg"
+            }
+        ];
+
+        // Blog posts data
+        const blogPosts = [
+            {
+                title: "The Art of Coffee Roasting",
+                date: "October 15, 2023",
+                image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+                excerpt: "Discover the intricate process of transforming green coffee beans into the aromatic brown beans we know and love."
+            },
+            {
+                title: "Brewing the Perfect Cup at Home",
+                date: "September 28, 2023",
+                image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+                excerpt: "Learn professional techniques to elevate your home coffee brewing experience."
+            },
+            {
+                title: "Sustainable Coffee Farming Practices",
+                date: "August 12, 2023",
+                image: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1161&q=80",
+                excerpt: "How our partner farms are implementing eco-friendly methods to protect our planet."
+            }
+        ];
+
+        // Global state
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // DOM Elements
+        const productsContainer = document.getElementById('products-container');
+        const shopProductsContainer = document.getElementById('shop-products-container');
+        const testimonialsContainer = document.getElementById('testimonials-container');
+        const blogPostsContainer = document.getElementById('blog-posts-container');
+        const cartBtn = document.getElementById('cart-btn');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCartBtn = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalPrice = document.getElementById('cart-total-price');
+        const cartCount = document.querySelector('.cart-count');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const closeCheckoutBtn = document.getElementById('close-checkout');
+        const checkoutForm = document.getElementById('checkout-form');
+        const checkoutItems = document.getElementById('checkout-items');
+        const checkoutTotal = document.getElementById('checkout-total');
+        const contactForm = document.getElementById('contact-form');
+        const newsletterForm = document.getElementById('newsletter-form');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+        const profileContainer = document.getElementById('profile-container');
+
+        // Auth DOM Elements
+        const loginModal = document.getElementById('login-modal');
+        const registerModal = document.getElementById('register-modal');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const closeLoginBtn = document.getElementById('close-login');
+        const closeRegisterBtn = document.getElementById('close-register');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userMenu = document.getElementById('user-menu');
+        const userDropdown = document.getElementById('user-dropdown');
+        const profileBtn = document.getElementById('profile-btn');
+        const ordersBtn = document.getElementById('orders-btn');
+        const showRegisterFromLogin = document.getElementById('show-register-from-login');
+        const showLoginFromRegister = document.getElementById('show-login-from-register');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        function initApp() {
+            displayProducts();
+            displayTestimonials();
+            displayBlogPosts();
+            updateCartUI();
+            updateUserUI();
+            setupEventListeners();
+        }
+
+        // Display products in the UI
+        function displayProducts() {
+            // Featured products (first 6)
+            const featuredProducts = products.slice(0, 6);
+            productsContainer.innerHTML = '';
+            
+            featuredProducts.forEach(product => {
+                const productCard = createProductCard(product);
+                productsContainer.appendChild(productCard);
+            });
+
+            // All products for shop page
+            shopProductsContainer.innerHTML = '';
+            products.forEach(product => {
+                const productCard = createProductCard(product);
+                shopProductsContainer.appendChild(productCard);
+            });
+        }
+
+        // Create product card element
+        function createProductCard(product) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="product-img">
+                <div class="product-info">
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-price">$${product.price.toFixed(2)}</p>
+                    <p class="product-description">${product.description}</p>
+                    <button class="btn add-to-cart" data-id="${product.id}">Add to Cart</button>
+                </div>
+            `;
+            return productCard;
+        }
+
+        // Display testimonials
+        function displayTestimonials() {
+            testimonialsContainer.innerHTML = '';
+            testimonials.forEach(testimonial => {
+                const testimonialCard = document.createElement('div');
+                testimonialCard.className = 'testimonial-card';
+                testimonialCard.innerHTML = `
+                    <p class="testimonial-text">"${testimonial.text}"</p>
+                    <div class="testimonial-author">
+                        <img src="${testimonial.avatar}" alt="${testimonial.name}" class="author-avatar">
+                        <div class="author-info">
+                            <h4>${testimonial.name}</h4>
+                            <p>${testimonial.role}</p>
+                        </div>
+                    </div>
+                `;
+                testimonialsContainer.appendChild(testimonialCard);
+            });
+        }
+
+        // Display blog posts
+        function displayBlogPosts() {
+            blogPostsContainer.innerHTML = '';
+            blogPosts.forEach(post => {
+                const blogCard = document.createElement('div');
+                blogCard.className = 'blog-card';
+                blogCard.innerHTML = `
+                    <img src="${post.image}" alt="${post.title}">
+                    <div class="blog-content">
+                        <p class="blog-date">${post.date}</p>
+                        <h3 class="blog-title">${post.title}</h3>
+                        <p>${post.excerpt}</p>
+                        <a href="#" class="btn" style="margin-top: 1rem;">Read More</a>
+                    </div>
+                `;
+                blogPostsContainer.appendChild(blogCard);
+            });
+        }
+
+        // Update user interface
+        function updateUserUI() {
+            if (currentUser) {
+                // User is logged in
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                userMenu.style.display = 'block';
+                
+                // Add user greeting
+                const existingGreeting = userDropdown.querySelector('.user-greeting');
+                if (existingGreeting) {
+                    existingGreeting.remove();
+                }
+                
+                const userGreeting = document.createElement('div');
+                userGreeting.className = 'user-greeting';
+                userGreeting.textContent = `Hello, ${currentUser.name}`;
+                userDropdown.insertBefore(userGreeting, userMenu);
+
+                // Update checkout button
+                const checkoutBtn = document.getElementById('checkout-btn');
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.classList.remove('btn-disabled');
+                }
+
+            } else {
+                // User is logged out
+                loginBtn.style.display = 'block';
+                registerBtn.style.display = 'block';
+                userMenu.style.display = 'none';
+                
+                // Remove user greeting
+                const existingGreeting = userDropdown.querySelector('.user-greeting');
+                if (existingGreeting) {
+                    existingGreeting.remove();
+                }
+
+                // Disable checkout button
+                const checkoutBtn = document.getElementById('checkout-btn');
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.classList.add('btn-disabled');
+                }
+            }
+        }
+
+        // Display profile page
+        function displayProfile() {
+            if (!currentUser) {
+                showNotification('Please login to view your profile');
+                navigateToPage('home');
+                return;
+            }
+
+            profileContainer.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        ${currentUser.name.charAt(0).toUpperCase()}
+                    </div>
+                    <h3>${currentUser.name}</h3>
+                    <p>Member since ${new Date().toLocaleDateString()}</p>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="info-group">
+                        <label>Full Name</label>
+                        <div class="info-value">${currentUser.name}</div>
+                    </div>
+                    <div class="info-group">
+                        <label>Username</label>
+                        <div class="info-value">${currentUser.username}</div>
+                    </div>
+                    <div class="info-group">
+                        <label>Email</label>
+                        <div class="info-value">${currentUser.email}</div>
+                    </div>
+                    <div class="info-group">
+                        <label>Account Type</label>
+                        <div class="info-value">Premium Customer</div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn" onclick="showNotification('Feature coming soon!')">Edit Profile</button>
+                    <button class="btn" onclick="showNotification('Feature coming soon!')">Change Password</button>
+                </div>
+            `;
+        }
+
+        // Register functionality
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            // Validation
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match!');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters long!');
+                return;
+            }
+
+            // Check if user already exists
+            const existingUser = users.find(u => u.username === username || u.email === email);
+            if (existingUser) {
+                showNotification('Username or email already exists!');
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name,
+                username,
+                email,
+                password, // In real app, hash this password
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Auto login after registration
+            currentUser = {
+                id: newUser.id,
+                name: newUser.name,
+                username: newUser.username,
+                email: newUser.email
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserUI();
+            registerModal.style.display = 'none';
+            registerForm.reset();
+            showNotification(`Welcome to Unforgettable Coffee, ${name}!`);
+        });
+
+        // Login functionality
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Check users
+            const user = users.find(u => 
+                (u.username === username || u.email === username) && 
+                u.password === password
+            );
+            
+            if (user) {
+                currentUser = {
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUserUI();
+                loginModal.style.display = 'none';
+                loginForm.reset();
+                showNotification(`Welcome back, ${user.name}!`);
+            } else {
+                showNotification('Invalid username/email or password!');
+            }
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUserUI();
+            showNotification('You have been logged out successfully.');
+            navigateToPage('home');
+        });
+
+        // Cart functionality
+        function addToCart(e) {
+            if (!currentUser) {
+                showNotification('Please login to add items to cart!');
+                loginModal.style.display = 'flex';
+                return;
+            }
+
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const product = products.find(p => p.id === productId);
+            
+            // Check if product is already in cart
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showNotification(`${product.name} added to cart!`);
+        }
+
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            let itemCount = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                itemCount += item.quantity;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                    <div class="cart-item-details">
+                        <h4 class="cart-item-title">${item.name}</h4>
+                        <p class="cart-item-price">$${item.price.toFixed(2)}</p>
+                        <div class="cart-item-actions">
+                            <button class="quantity-btn decrease" data-id="${item.id}">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn increase" data-id="${item.id}">+</button>
+                            <button class="quantity-btn remove" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+            
+            cartTotalPrice.textContent = `$${total.toFixed(2)}`;
+            cartCount.textContent = itemCount;
+            
+            // Add event listeners to cart item buttons
+            document.querySelectorAll('.decrease').forEach(button => {
+                button.addEventListener('click', decreaseQuantity);
+            });
+            
+            document.querySelectorAll('.increase').forEach(button => {
+                button.addEventListener('click', increaseQuantity);
+            });
+            
+            document.querySelectorAll('.remove').forEach(button => {
+                button.addEventListener('click', removeFromCart);
+            });
+        }
+
+        function decreaseQuantity(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const item = cart.find(item => item.id === productId);
+            
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+            } else {
+                cart = cart.filter(item => item.id !== productId);
+            }
+            
+            updateCart();
+        }
+
+        function increaseQuantity(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const item = cart.find(item => item.id === productId);
+            item.quantity += 1;
+            updateCart();
+        }
+
+        function removeFromCart(e) {
+            const productId = parseInt(e.target.closest('.remove').getAttribute('data-id'));
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        // Setup checkout modal
+        function setupCheckoutModal() {
+            if (!currentUser) {
+                showNotification('Please login to checkout!');
+                loginModal.style.display = 'flex';
+                return;
+            }
+
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!');
+                return;
+            }
+
+            checkoutItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const checkoutItem = document.createElement('div');
+                checkoutItem.className = 'checkout-item';
+                checkoutItem.innerHTML = `
+                    <p><strong>${item.name}</strong> x ${item.quantity} - $${itemTotal.toFixed(2)}</p>
+                `;
+                checkoutItems.appendChild(checkoutItem);
+            });
+            
+            checkoutTotal.textContent = `$${total.toFixed(2)}`;
+            
+            // Auto-fill user info if logged in
+            if (currentUser) {
+                document.getElementById('checkout-name').value = currentUser.name;
+                document.getElementById('checkout-email').value = currentUser.email;
+            }
+        }
+
+        // Checkout form submission - UPDATED TO SEND TO BACKEND
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showNotification('Please login to place order!');
+                return;
+            }
+
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!');
+                return;
+            }
+
+            // Prepare order data for backend
+            const orderData = {
+                customerInfo: {
+                    name: document.getElementById('checkout-name').value,
+                    email: document.getElementById('checkout-email').value,
+                    phone: document.getElementById('checkout-phone').value,
+                    address: document.getElementById('checkout-address').value
+                },
+                items: cart.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                paymentMethod: document.getElementById('checkout-payment').value
+            };
+
+            try {
+                // Send order to backend API
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('🎉 Order placed successfully! Thank you for your purchase!');
+                    
+                    // Clear cart
+                    cart = [];
+                    updateCart();
+                    checkoutModal.style.display = 'none';
+                    checkoutForm.reset();
+                    
+                    console.log('✅ Order sent to backend:', result);
+                } else {
+                    showNotification('❌ Failed to place order: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('❌ Error sending order to backend:', error);
+                showNotification('❌ Network error. Please try again.');
+            }
+        });
+
+        // Navigation functionality
+        function navigateToPage(pageId) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(`${pageId}-page`).classList.add('active');
+            
+            // Load specific page content
+            if (pageId === 'profile') {
+                displayProfile();
+            }
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = e.target.getAttribute('data-page');
+                    navigateToPage(pageId);
+                });
+            });
+
+            // Add to cart buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('add-to-cart')) {
+                    addToCart(e);
+                }
+            });
+
+            // Cart modal
+            cartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                cartModal.style.display = 'block';
+            });
+
+            closeCartBtn.addEventListener('click', () => {
+                cartModal.style.display = 'none';
+            });
+
+            // Checkout
+            checkoutBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showNotification('Your cart is empty!');
+                    return;
+                }
+                if (!currentUser) {
+                    showNotification('Please login to checkout!');
+                    loginModal.style.display = 'flex';
+                    return;
+                }
+                cartModal.style.display = 'none';
+                setupCheckoutModal();
+                checkoutModal.style.display = 'block';
+            });
+
+            closeCheckoutBtn.addEventListener('click', () => {
+                checkoutModal.style.display = 'none';
+            });
+
+            // Contact form submission
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                showNotification('Message sent successfully! We will get back to you soon.');
+                contactForm.reset();
+            });
+
+            // Newsletter form submission
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const emailInput = newsletterForm.querySelector('input[type="email"]');
+                showNotification(`Thank you for subscribing with ${emailInput.value}!`);
+                newsletterForm.reset();
+            });
+
+            // Auth functionality
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+            });
+
+            registerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerModal.style.display = 'flex';
+            });
+
+            profileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToPage('profile');
+            });
+
+            closeLoginBtn.addEventListener('click', () => {
+                loginModal.style.display = 'none';
+            });
+
+            closeRegisterBtn.addEventListener('click', () => {
+                registerModal.style.display = 'none';
+            });
+
+            // Switch between login and register
+            showRegisterFromLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'none';
+                registerModal.style.display = 'flex';
+            });
+
+            showLoginFromRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerModal.style.display = 'none';
+                loginModal.style.display = 'flex';
+            });
+
+            // Demo orders button
+            ordersBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('Order history coming soon!');
+            });
+
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === cartModal) {
+                    cartModal.style.display = 'none';
+                }
+                if (e.target === checkoutModal) {
+                    checkoutModal.style.display = 'none';
+                }
+                if (e.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+                if (e.target === registerModal) {
+                    registerModal.style.display = 'none';
+                }
+            });
+
+            // Search functionality
+            document.getElementById('search-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const searchTerm = prompt('What coffee are you looking for?');
+                if (searchTerm) {
+                    showNotification(`Searching for: ${searchTerm}`);
+                    // In a real app, you would filter products here
+                }
+            });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
