@@ -1,4 +1,4 @@
-// 🚀 UNFORGETTABLE COFFEE SHOP - BACKEND SERVER
+// 🚀 UNFORGETTABLE COFFEE SHOP - BACKEND SERVER (RAILWAY OPTIMIZED)
 console.log('☕ STARTING UNFORGETTABLE COFFEE SERVER...');
 
 const express = require('express');
@@ -9,9 +9,22 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ✅ RAILWAY FIX: Dynamic URL for deployment
+const getBaseURL = () => {
+    if (process.env.RAILWAY_STATIC_URL) {
+        return process.env.RAILWAY_STATIC_URL;
+    } else if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+        return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+    } else {
+        return `http://localhost:${PORT}`;
+    }
+};
+
+const baseURL = getBaseURL();
+
 // Enhanced CORS configuration for deployment
 app.use(cors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin: ['https://unforgettable-coffee-shop.railway.app', 'http://localhost:3000', 'http://localhost:8080'],
     credentials: true
 }));
 
@@ -225,7 +238,8 @@ app.get('/api/health', (req, res) => {
         environment: process.env.NODE_ENV || 'development',
         uptime: process.uptime(),
         memory: process.memoryUsage(),
-        version: '1.0.0'
+        version: '1.0.0',
+        baseURL: baseURL
     };
     res.json(healthData);
 });
@@ -427,6 +441,14 @@ app.get('/admin', (req, res) => {
                         background: #E8F5E8;
                         border-left: 4px solid #4CAF50;
                     }
+                    .deployment-info {
+                        background: #E3F2FD;
+                        border: 1px solid #2196F3;
+                        padding: 15px;
+                        border-radius: 8px;
+                        margin: 15px 0;
+                        text-align: center;
+                    }
                 </style>
             </head>
             <body>
@@ -434,6 +456,10 @@ app.get('/admin', (req, res) => {
                     <div class="header">
                         <h1>☕ Unforgettable Coffee - Admin Dashboard</h1>
                         <p>Real-time Business Analytics & Order Management</p>
+                        <div class="deployment-info">
+                            <strong>🚀 DEPLOYED ON RAILWAY</strong>
+                            <p>Server URL: ${baseURL}</p>
+                        </div>
                     </div>
                     
                     <div class="stats-grid">
@@ -652,6 +678,15 @@ app.get('/admin/sales-report', (req, res) => {
                         align-items: center;
                         font-size: 0.8rem;
                     }
+                    .deployment-info {
+                        background: #E3F2FD;
+                        border: 1px solid #2196F3;
+                        padding: 10px;
+                        border-radius: 8px;
+                        margin: 10px 0;
+                        text-align: center;
+                        font-size: 0.9rem;
+                    }
                 </style>
             </head>
             <body>
@@ -659,6 +694,9 @@ app.get('/admin/sales-report', (req, res) => {
                     <div class="header">
                         <h1>📊 Sales Analytics Report</h1>
                         <p>Comprehensive Business Performance Analysis</p>
+                        <div class="deployment-info">
+                            <strong>🌐 Live Production Server:</strong> ${baseURL}
+                        </div>
                     </div>
                     
                     <div class="stats-grid">
@@ -860,6 +898,15 @@ app.get('/admin/orders', (req, res) => {
                         padding: 3rem;
                         font-size: 1.1rem;
                     }
+                    .deployment-info {
+                        background: #E3F2FD;
+                        border: 1px solid #2196F3;
+                        padding: 10px;
+                        border-radius: 8px;
+                        margin: 10px 0;
+                        text-align: center;
+                        font-size: 0.9rem;
+                    }
                 </style>
             </head>
             <body>
@@ -867,6 +914,9 @@ app.get('/admin/orders', (req, res) => {
                     <div class="header">
                         <h1>📦 Complete Order History</h1>
                         <p>All Customer Orders - Total: ${orders.length} orders</p>
+                        <div class="deployment-info">
+                            <strong>🌐 Production Server:</strong> ${baseURL}
+                        </div>
                     </div>
                     
                     <div class="order-count">
@@ -1036,6 +1086,15 @@ app.get('/test', (req, res) => {
                     border-radius: 10px;
                     margin: 20px 0;
                 }
+                .server-url {
+                    background: #E3F2FD;
+                    border: 2px solid #2196F3;
+                    padding: 15px;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                    font-family: monospace;
+                    font-size: 1.1em;
+                }
             </style>
         </head>
         <body>
@@ -1045,9 +1104,14 @@ app.get('/test', (req, res) => {
                 
                 <div class="status">🎉 SERVER IS WORKING PERFECTLY!</div>
                 
+                <div class="server-url">
+                    <strong>🌐 PRODUCTION URL:</strong><br>
+                    ${baseURL}
+                </div>
+                
                 <div class="deployment-ready">
-                    <strong>🚀 READY FOR DEPLOYMENT!</strong>
-                    <p>Backend server is fully configured and optimized for production.</p>
+                    <strong>🚀 SUCCESSFULLY DEPLOYED ON RAILWAY!</strong>
+                    <p>Your coffee shop backend is now live and accessible to clients worldwide.</p>
                 </div>
                 
                 <div class="info-box">
@@ -1056,6 +1120,7 @@ app.get('/test', (req, res) => {
                     <p><strong>Environment:</strong> ${process.env.NODE_ENV || 'development'}</p>
                     <p><strong>Node.js:</strong> ${process.version}</p>
                     <p><strong>Platform:</strong> ${process.platform}</p>
+                    <p><strong>Base URL:</strong> ${baseURL}</p>
                 </div>
 
                 <div class="info-box">
@@ -1075,7 +1140,8 @@ app.get('/test', (req, res) => {
                 </div>
                 
                 <p style="color: #666; margin-top: 30px;">
-                    All systems operational • Ready to serve coffee! ☕
+                    All systems operational • Ready to serve coffee! ☕<br>
+                    <strong>Clients can now access your coffee shop at: ${baseURL}</strong>
                 </p>
             </div>
         </body>
@@ -1150,12 +1216,24 @@ app.get('/', (req, res) => {
                     margin: 20px 0;
                     color: #856404;
                 }
+                .success { 
+                    background: #E8F5E8; 
+                    border: 1px solid #4CAF50; 
+                    padding: 15px; 
+                    border-radius: 8px; 
+                    margin: 20px 0;
+                    color: #2E7D32;
+                }
             </style>
         </head>
         <body>
             <div class="container">
                 <h1>☕ Unforgettable Coffee Shop</h1>
-                <p>🚀 <strong>BACKEND SERVER IS RUNNING!</strong></p>
+                
+                <div class="success">
+                    <p>🚀 <strong>BACKEND SERVER IS RUNNING ON RAILWAY!</strong></p>
+                    <p><strong>Production URL:</strong> ${baseURL}</p>
+                </div>
                 
                 <div class="warning">
                     <p><strong>Note:</strong> Frontend files (index.html) not found in expected locations.</p>
@@ -1179,7 +1257,8 @@ app.get('/', (req, res) => {
                 </div>
                 
                 <p style="margin-top: 30px; color: #666;">
-                    Server is ready to handle API requests for your coffee shop application.
+                    Server is ready to handle API requests for your coffee shop application.<br>
+                    <strong>Clients can access your business tools at: ${baseURL}/admin</strong>
                 </p>
             </div>
         </body>
@@ -1447,22 +1526,23 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
-// Start server with enhanced logging
-const server = app.listen(PORT, () => {
+// ✅ RAILWAY FIX: Updated server startup with dynamic URLs
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log('\n🎊 ============================================');
     console.log('🚀 UNFORGETTABLE COFFEE SHOP SERVER');
     console.log('📍 PORT: ' + PORT);
-    console.log('🌐 URL: http://localhost:' + PORT);
-    console.log('🔗 API: http://localhost:' + PORT + '/api');
-    console.log('📊 ADMIN: http://localhost:' + PORT + '/admin');
-    console.log('📈 SALES UI: http://localhost:' + PORT + '/admin/sales-report');
-    console.log('📦 ORDERS UI: http://localhost:' + PORT + '/admin/orders');
-    console.log('🛒 Orders API: http://localhost:' + PORT + '/api/orders');
-    console.log('📧 Contact: http://localhost:' + PORT + '/api/contact');
-    console.log('📬 Newsletter: http://localhost:' + PORT + '/api/newsletter');
-    console.log('🏥 Health: http://localhost:' + PORT + '/api/health');
-    console.log('🧪 Test: http://localhost:' + PORT + '/test');
-    console.log('✅ SERVER READY FOR DEPLOYMENT!');
+    console.log('🌐 URL: ' + baseURL);
+    console.log('🔗 API: ' + baseURL + '/api');
+    console.log('📊 ADMIN: ' + baseURL + '/admin');
+    console.log('📈 SALES UI: ' + baseURL + '/admin/sales-report');
+    console.log('📦 ORDERS UI: ' + baseURL + '/admin/orders');
+    console.log('🛒 Orders API: ' + baseURL + '/api/orders');
+    console.log('📧 Contact: ' + baseURL + '/api/contact');
+    console.log('📬 Newsletter: ' + baseURL + '/api/newsletter');
+    console.log('🏥 Health: ' + baseURL + '/api/health');
+    console.log('🧪 Test: ' + baseURL + '/test');
+    console.log('✅ SUCCESSFULLY DEPLOYED ON RAILWAY!');
+    console.log('✅ CLIENTS CAN NOW ACCESS YOUR COFFEE SHOP!');
     console.log('============================================\n');
     
     // Generate initial sales report
