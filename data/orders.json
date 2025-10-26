@@ -1,1 +1,100 @@
-[]
+[
+  {
+    "orderId": "UC-1761492976438-sadrko47i",
+    "customerInfo": {
+      "email": "maria@test.com",
+      "name": "Maria Santos",
+      "phone": "+639123456789",
+      "address": "456 Coffee Avenue, Quezon City"
+    },
+    "total": 16.99,
+    "items": [
+      {
+        "price": 16.99,
+        "quantity": 1,
+        "name": "Colombian Supremo"
+      }
+    ],
+    "status": "confirmed",
+    "createdAt": "2025-10-26T15:36:16.438Z",
+    "updatedAt": "2025-10-26T15:36:16.438Z"
+  },
+  {
+    "orderId": "UC-1761493935912-g3ju0z5vc",
+    "customerInfo": {
+      "name": "Mark John Oira Azores",
+      "email": "markjohnazores20@gmail.com",
+      "phone": "09083837174",
+      "address": "245 padre rada 29 Manila NCR"
+    },
+    "items": [
+      {
+        "name": "Colombian Supremo",
+        "quantity": 1,
+        "price": 16.99
+      },
+      {
+        "name": "Guatemalan Antigua",
+        "quantity": 1,
+        "price": 17.99
+      }
+    ],
+    "total": 34.98,
+    "paymentMethod": "paypal",
+    "status": "confirmed",
+    "createdAt": "2025-10-26T15:52:15.912Z",
+    "updatedAt": "2025-10-26T15:52:15.912Z"
+  },
+  {
+    "orderId": "UC-1761496218062-se2ww72v9",
+    "customerInfo": {
+      "name": "John",
+      "email": "johnny20@gmail.com",
+      "phone": "0569219571",
+      "address": "Villa 21 Room 103 AS SALEEM ST KHALIFA CITY, ABU DHABI CITY UAE"
+    },
+    "items": [
+      {
+        "name": "Costa Rican Tarrazu",
+        "quantity": 1,
+        "price": 20.99
+      },
+      {
+        "name": "Guatemalan Antigua",
+        "quantity": 1,
+        "price": 17.99
+      }
+    ],
+    "total": 38.98,
+    "paymentMethod": "credit",
+    "status": "confirmed",
+    "createdAt": "2025-10-26T16:30:18.062Z",
+    "updatedAt": "2025-10-26T16:30:18.062Z"
+  },
+  {
+    "orderId": "UC-1761499807762-dm9u5xotf",
+    "customerInfo": {
+      "name": "John",
+      "email": "gabrielifurung@gmail.com",
+      "phone": "0560512135",
+      "address": "Villa 21 Room 103 AS SALEEM ST KHALIFA CITY, ABU DHABI CITY UAE"
+    },
+    "items": [
+      {
+        "name": "Ethiopian Yirgacheffe",
+        "quantity": 1,
+        "price": 18.99
+      },
+      {
+        "name": "Costa Rican Tarrazu",
+        "quantity": 1,
+        "price": 20.99
+      }
+    ],
+    "total": 39.98,
+    "paymentMethod": "cod",
+    "status": "confirmed",
+    "createdAt": "2025-10-26T17:30:07.762Z",
+    "updatedAt": "2025-10-26T17:30:07.762Z"
+  }
+]

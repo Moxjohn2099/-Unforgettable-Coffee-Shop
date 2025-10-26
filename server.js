@@ -174,6 +174,48 @@ const validateEmail = (req, res, next) => {
     next();
 };
 
+// ✅ SALES REPORT FUNCTION
+function generateSalesReport() {
+    try {
+        const orders = readData(ordersFile);
+        const products = readData(productsFile);
+        
+        let totalSales = 0;
+        let totalOrders = orders.length;
+        let popularProducts = {};
+        
+        orders.forEach(order => {
+            totalSales += order.total;
+            
+            if (order.items && Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    const productName = item.name || item.product;
+                    popularProducts[productName] = (popularProducts[productName] || 0) + item.quantity;
+                });
+            }
+        });
+        
+        // Sort popular products
+        const sortedProducts = Object.entries(popularProducts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+        
+        console.log('\n📊 📊 📊 SALES REPORT 📊 📊 📊');
+        console.log('══════════════════════════════════════');
+        console.log(`💰 Total Sales: $${totalSales.toFixed(2)}`);
+        console.log(`📦 Total Orders: ${totalOrders}`);
+        console.log(`📈 Average Order: $${(totalSales / totalOrders).toFixed(2)}`);
+        console.log('🏆 Top Products:');
+        sortedProducts.forEach(([product, quantity], index) => {
+            console.log(`   ${index + 1}. ${product} - ${quantity} sold`);
+        });
+        console.log('══════════════════════════════════════\n');
+        
+    } catch (error) {
+        console.error('❌ Error generating sales report:', error);
+    }
+}
+
 // ✅ HEALTH CHECK - Enhanced with more info
 app.get('/api/health', (req, res) => {
     const healthData = {
@@ -186,6 +228,728 @@ app.get('/api/health', (req, res) => {
         version: '1.0.0'
     };
     res.json(healthData);
+});
+
+// ✅ SALES REPORT API
+app.get('/api/sales-report', (req, res) => {
+    try {
+        const orders = readData(ordersFile);
+        const products = readData(productsFile);
+        
+        let totalSales = 0;
+        let totalOrders = orders.length;
+        let popularProducts = {};
+        let dailySales = {};
+        
+        orders.forEach(order => {
+            totalSales += order.total;
+            
+            // Group by date
+            const orderDate = new Date(order.createdAt).toLocaleDateString();
+            dailySales[orderDate] = (dailySales[orderDate] || 0) + order.total;
+            
+            // Count products
+            if (order.items && Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    const productName = item.name || item.product;
+                    popularProducts[productName] = (popularProducts[productName] || 0) + item.quantity;
+                });
+            }
+        });
+        
+        const sortedProducts = Object.entries(popularProducts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+            
+        const sortedDailySales = Object.entries(dailySales)
+            .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+            .slice(-7); // Last 7 days
+        
+        res.json({
+            success: true,
+            report: {
+                totalSales: totalSales.toFixed(2),
+                totalOrders,
+                averageOrder: (totalSales / totalOrders).toFixed(2),
+                popularProducts: sortedProducts,
+                recentSales: sortedDailySales,
+                timestamp: new Date().toISOString()
+            }
+        });
+        
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ✅ ADMIN DASHBOARD - FOR CLIENT TO VIEW ORDERS & SALES
+app.get('/admin', (req, res) => {
+    try {
+        const orders = readData(ordersFile);
+        const products = readData(productsFile);
+        
+        let totalSales = 0;
+        let totalOrders = orders.length;
+        let popularProducts = {};
+        let todaySales = 0;
+        let todayOrders = 0;
+        
+        const today = new Date().toLocaleDateString();
+        
+        orders.forEach(order => {
+            totalSales += order.total;
+            
+            // Today's sales
+            const orderDate = new Date(order.createdAt).toLocaleDateString();
+            if (orderDate === today) {
+                todaySales += order.total;
+                todayOrders++;
+            }
+            
+            // Popular products
+            if (order.items && Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    const productName = item.name || item.product;
+                    popularProducts[productName] = (popularProducts[productName] || 0) + item.quantity;
+                });
+            }
+        });
+        
+        const sortedProducts = Object.entries(popularProducts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+        res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Admin Dashboard - Unforgettable Coffee</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                        background: #f5f5f5; 
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 1200px;
+                        margin: 0 auto;
+                    }
+                    .header {
+                        background: #8B4513;
+                        color: white;
+                        padding: 2rem;
+                        border-radius: 10px;
+                        margin-bottom: 2rem;
+                        text-align: center;
+                    }
+                    .stats-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 1rem;
+                        margin-bottom: 2rem;
+                    }
+                    .stat-card {
+                        background: white;
+                        padding: 1.5rem;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        text-align: center;
+                    }
+                    .stat-number {
+                        font-size: 2rem;
+                        font-weight: bold;
+                        color: #8B4513;
+                        margin-bottom: 0.5rem;
+                    }
+                    .stat-label {
+                        color: #666;
+                        font-size: 0.9rem;
+                    }
+                    .orders-section {
+                        background: white;
+                        padding: 2rem;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        margin-bottom: 2rem;
+                    }
+                    .order-item {
+                        border: 1px solid #ddd;
+                        padding: 1rem;
+                        margin-bottom: 1rem;
+                        border-radius: 5px;
+                        background: #f9f9f9;
+                    }
+                    .order-header {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 0.5rem;
+                        padding-bottom: 0.5rem;
+                        border-bottom: 1px solid #eee;
+                    }
+                    .order-id {
+                        font-weight: bold;
+                        color: #8B4513;
+                    }
+                    .order-total {
+                        font-weight: bold;
+                        color: #2E7D32;
+                    }
+                    .product-list {
+                        margin-top: 0.5rem;
+                        padding-left: 1rem;
+                    }
+                    .product-item {
+                        margin: 0.2rem 0;
+                        color: #555;
+                    }
+                    .btn {
+                        background: #8B4513;
+                        color: white;
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 5px;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 14px;
+                    }
+                    .btn:hover {
+                        background: #A0522D;
+                    }
+                    .btn-group {
+                        text-align: center;
+                        margin: 2rem 0;
+                    }
+                    .today-highlight {
+                        background: #E8F5E8;
+                        border-left: 4px solid #4CAF50;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>☕ Unforgettable Coffee - Admin Dashboard</h1>
+                        <p>Real-time Business Analytics & Order Management</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">$${totalSales.toFixed(2)}</div>
+                            <div class="stat-label">Total Sales</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${totalOrders}</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">$${(totalOrders > 0 ? (totalSales / totalOrders).toFixed(2) : '0.00')}</div>
+                            <div class="stat-label">Average Order</div>
+                        </div>
+                        <div class="stat-card today-highlight">
+                            <div class="stat-number">$${todaySales.toFixed(2)}</div>
+                            <div class="stat-label">Today's Sales</div>
+                        </div>
+                        <div class="stat-card today-highlight">
+                            <div class="stat-number">${todayOrders}</div>
+                            <div class="stat-label">Today's Orders</div>
+                        </div>
+                    </div>
+
+                    <div class="orders-section">
+                        <h2>📦 Recent Orders (Last 10)</h2>
+                        ${orders.length === 0 ? 
+                            '<p style="text-align: center; color: #666; padding: 2rem;">No orders yet. Orders will appear here when customers place them.</p>' : 
+                            orders.slice(-10).reverse().map(order => `
+                                <div class="order-item">
+                                    <div class="order-header">
+                                        <span class="order-id">📦 Order: ${order.orderId}</span>
+                                        <span class="order-total">💰 $${order.total}</span>
+                                    </div>
+                                    <div><strong>👤 Customer:</strong> ${order.customerInfo?.name || 'N/A'} - ${order.customerInfo?.email || 'N/A'}</div>
+                                    <div><strong>📞 Phone:</strong> ${order.customerInfo?.phone || 'N/A'}</div>
+                                    <div><strong>📅 Date:</strong> ${new Date(order.createdAt).toLocaleString()}</div>
+                                    <div><strong>🏠 Address:</strong> ${order.customerInfo?.address || 'N/A'}</div>
+                                    <div class="product-list">
+                                        <strong>📋 Items:</strong>
+                                        ${order.items ? order.items.map(item => `
+                                            <div class="product-item">• ${item.quantity}x ${item.name} - $${item.price} each (Total: $${(item.quantity * item.price).toFixed(2)})</div>
+                                        `).join('') : '<div class="product-item">No items</div>'}
+                                    </div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                    
+                    <div class="btn-group">
+                        <a href="/admin/sales-report" class="btn">📊 View Detailed Sales Report</a>
+                        <a href="/admin/orders" class="btn">📦 View All Orders</a>
+                        <a href="/" target="_blank" class="btn">🌐 Visit Website</a>
+                        <button onclick="location.reload()" class="btn">🔄 Refresh Dashboard</button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                        <p>💡 <strong>Tip:</strong> Keep this dashboard open to see real-time orders and sales updates.</p>
+                        <p>Last updated: ${new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+    } catch (error) {
+        res.status(500).send(`
+            <html>
+            <body style="font-family: Arial; text-align: center; padding: 50px;">
+                <h1 style="color: #8B4513;">❌ Error Loading Dashboard</h1>
+                <p>There was an error loading the admin dashboard. Please try again.</p>
+                <a href="/admin" style="color: #8B4513;">Retry</a>
+            </body>
+            </html>
+        `);
+    }
+});
+
+// ✅ SALES REPORT UI - BEAUTIFUL INTERFACE
+app.get('/admin/sales-report', (req, res) => {
+    try {
+        const orders = readData(ordersFile);
+        const products = readData(productsFile);
+        
+        let totalSales = 0;
+        let totalOrders = orders.length;
+        let popularProducts = {};
+        let dailySales = {};
+        let monthlySales = {};
+        
+        orders.forEach(order => {
+            totalSales += order.total;
+            
+            // Daily sales
+            const orderDate = new Date(order.createdAt).toLocaleDateString();
+            dailySales[orderDate] = (dailySales[orderDate] || 0) + order.total;
+            
+            // Monthly sales
+            const monthYear = new Date(order.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+            });
+            monthlySales[monthYear] = (monthlySales[monthYear] || 0) + order.total;
+            
+            // Popular products
+            if (order.items && Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    const productName = item.name || item.product;
+                    popularProducts[productName] = (popularProducts[productName] || 0) + item.quantity;
+                });
+            }
+        });
+        
+        const sortedProducts = Object.entries(popularProducts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+            
+        const sortedDailySales = Object.entries(dailySales)
+            .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+            .slice(-30); // Last 30 days
+            
+        const sortedMonthlySales = Object.entries(monthlySales)
+            .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+        res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Sales Report - Unforgettable Coffee</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                        background: #f5f5f5; 
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 1200px;
+                        margin: 0 auto;
+                    }
+                    .header {
+                        background: #2E7D32;
+                        color: white;
+                        padding: 2rem;
+                        border-radius: 10px;
+                        margin-bottom: 2rem;
+                        text-align: center;
+                    }
+                    .stats-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 1rem;
+                        margin-bottom: 2rem;
+                    }
+                    .stat-card {
+                        background: white;
+                        padding: 1.5rem;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        text-align: center;
+                    }
+                    .stat-number {
+                        font-size: 2rem;
+                        font-weight: bold;
+                        color: #2E7D32;
+                        margin-bottom: 0.5rem;
+                    }
+                    .stat-label {
+                        color: #666;
+                        font-size: 0.9rem;
+                    }
+                    .section {
+                        background: white;
+                        padding: 2rem;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        margin-bottom: 2rem;
+                    }
+                    .product-item, .sales-item {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 0.8rem;
+                        border-bottom: 1px solid #eee;
+                    }
+                    .product-item:hover, .sales-item:hover {
+                        background: #f9f9f9;
+                    }
+                    .btn {
+                        background: #8B4513;
+                        color: white;
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 5px;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 14px;
+                    }
+                    .btn:hover {
+                        background: #A0522D;
+                    }
+                    .btn-group {
+                        text-align: center;
+                        margin: 2rem 0;
+                    }
+                    .chart-bar {
+                        background: #4CAF50;
+                        height: 20px;
+                        margin: 5px 0;
+                        border-radius: 10px;
+                        color: white;
+                        padding: 0 10px;
+                        display: flex;
+                        align-items: center;
+                        font-size: 0.8rem;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📊 Sales Analytics Report</h1>
+                        <p>Comprehensive Business Performance Analysis</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">$${totalSales.toFixed(2)}</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${totalOrders}</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">$${(totalOrders > 0 ? (totalSales / totalOrders).toFixed(2) : '0.00')}</div>
+                            <div class="stat-label">Average Order Value</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${sortedProducts.length}</div>
+                            <div class="stat-label">Products Sold</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>🏆 Top Selling Products</h2>
+                        ${sortedProducts.map(([product, quantity], index) => `
+                            <div class="product-item">
+                                <span>${index + 1}. ${product}</span>
+                                <span><strong>${quantity}</strong> sold</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="section">
+                        <h2>📈 Monthly Sales Performance</h2>
+                        ${sortedMonthlySales.map(([month, sales]) => `
+                            <div class="sales-item">
+                                <span>${month}</span>
+                                <span><strong>$${sales.toFixed(2)}</strong></span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="section">
+                        <h2>📅 Recent Daily Sales (Last 30 Days)</h2>
+                        ${sortedDailySales.reverse().map(([date, sales]) => `
+                            <div class="sales-item">
+                                <span>${date}</span>
+                                <span><strong>$${sales.toFixed(2)}</strong></span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="btn-group">
+                        <a href="/admin" class="btn">📋 Back to Dashboard</a>
+                        <a href="/admin/orders" class="btn">📦 View All Orders</a>
+                        <a href="/api/sales-report" target="_blank" class="btn">📄 Raw JSON Data</a>
+                        <button onclick="window.print()" class="btn">🖨️ Print Report</button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                        <p>Report generated: ${new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+    } catch (error) {
+        res.status(500).send(`
+            <html>
+            <body style="font-family: Arial; text-align: center; padding: 50px;">
+                <h1 style="color: #8B4513;">❌ Error Loading Sales Report</h1>
+                <p>There was an error generating the sales report. Please try again.</p>
+                <a href="/admin/sales-report" style="color: #8B4513;">Retry</a>
+            </body>
+            </html>
+        `);
+    }
+});
+
+// ✅ ALL ORDERS UI - COMPLETE ORDER MANAGEMENT
+app.get('/admin/orders', (req, res) => {
+    try {
+        const orders = readData(ordersFile);
+        
+        // Sort orders by date (newest first)
+        const sortedOrders = [...orders].sort((a, b) => 
+            new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>All Orders - Unforgettable Coffee</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                        background: #f5f5f5; 
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 1200px;
+                        margin: 0 auto;
+                    }
+                    .header {
+                        background: #1976D2;
+                        color: white;
+                        padding: 2rem;
+                        border-radius: 10px;
+                        margin-bottom: 2rem;
+                        text-align: center;
+                    }
+                    .order-count {
+                        background: white;
+                        padding: 1rem;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        margin-bottom: 2rem;
+                        text-align: center;
+                        font-size: 1.2rem;
+                    }
+                    .orders-section {
+                        background: white;
+                        padding: 2rem;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        margin-bottom: 2rem;
+                    }
+                    .order-item {
+                        border: 1px solid #ddd;
+                        padding: 1.5rem;
+                        margin-bottom: 1rem;
+                        border-radius: 8px;
+                        background: #f9f9f9;
+                    }
+                    .order-header {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 1rem;
+                        padding-bottom: 1rem;
+                        border-bottom: 2px solid #eee;
+                    }
+                    .order-id {
+                        font-weight: bold;
+                        color: #1976D2;
+                        font-size: 1.1rem;
+                    }
+                    .order-total {
+                        font-weight: bold;
+                        color: #2E7D32;
+                        font-size: 1.1rem;
+                    }
+                    .customer-info {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 1rem;
+                        margin-bottom: 1rem;
+                    }
+                    .info-group {
+                        margin-bottom: 0.5rem;
+                    }
+                    .info-label {
+                        font-weight: bold;
+                        color: #666;
+                        font-size: 0.9rem;
+                    }
+                    .product-list {
+                        margin-top: 1rem;
+                    }
+                    .product-item {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 0.5rem;
+                        border-bottom: 1px solid #eee;
+                    }
+                    .btn {
+                        background: #8B4513;
+                        color: white;
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 5px;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 14px;
+                    }
+                    .btn:hover {
+                        background: #A0522D;
+                    }
+                    .btn-group {
+                        text-align: center;
+                        margin: 2rem 0;
+                    }
+                    .no-orders {
+                        text-align: center;
+                        color: #666;
+                        padding: 3rem;
+                        font-size: 1.1rem;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📦 Complete Order History</h1>
+                        <p>All Customer Orders - Total: ${orders.length} orders</p>
+                    </div>
+                    
+                    <div class="order-count">
+                        📊 <strong>${orders.length}</strong> total orders processed
+                    </div>
+
+                    <div class="orders-section">
+                        ${orders.length === 0 ? 
+                            '<div class="no-orders">📭 No orders yet. Orders will appear here when customers place them.</div>' : 
+                            sortedOrders.map(order => `
+                                <div class="order-item">
+                                    <div class="order-header">
+                                        <span class="order-id">📦 Order: ${order.orderId}</span>
+                                        <span class="order-total">💰 $${order.total}</span>
+                                    </div>
+                                    
+                                    <div class="customer-info">
+                                        <div>
+                                            <div class="info-group">
+                                                <div class="info-label">👤 Customer</div>
+                                                <div>${order.customerInfo?.name || 'N/A'}</div>
+                                            </div>
+                                            <div class="info-group">
+                                                <div class="info-label">📧 Email</div>
+                                                <div>${order.customerInfo?.email || 'N/A'}</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="info-group">
+                                                <div class="info-label">📞 Phone</div>
+                                                <div>${order.customerInfo?.phone || 'N/A'}</div>
+                                            </div>
+                                            <div class="info-group">
+                                                <div class="info-label">📅 Order Date</div>
+                                                <div>${new Date(order.createdAt).toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">🏠 Delivery Address</div>
+                                        <div>${order.customerInfo?.address || 'N/A'}</div>
+                                    </div>
+                                    
+                                    <div class="product-list">
+                                        <div class="info-label">📋 Order Items:</div>
+                                        ${order.items ? order.items.map(item => `
+                                            <div class="product-item">
+                                                <span>${item.quantity}x ${item.name} @ $${item.price} each</span>
+                                                <span><strong>$${(item.quantity * item.price).toFixed(2)}</strong></span>
+                                            </div>
+                                        `).join('') : '<div>No items in order</div>'}
+                                    </div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                    
+                    <div class="btn-group">
+                        <a href="/admin" class="btn">📋 Back to Dashboard</a>
+                        <a href="/admin/sales-report" class="btn">📊 Sales Analytics</a>
+                        <a href="/api/orders" target="_blank" class="btn">📄 Raw JSON Data</a>
+                        <button onclick="window.print()" class="btn">🖨️ Print Orders</button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                        <p>Last updated: ${new Date().toLocaleString()} • ${orders.length} orders total</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
+    } catch (error) {
+        res.status(500).send(`
+            <html>
+            <body style="font-family: Arial; text-align: center; padding: 50px;">
+                <h1 style="color: #8B4513;">❌ Error Loading Orders</h1>
+                <p>There was an error loading the orders. Please try again.</p>
+                <a href="/admin/orders" style="color: #8B4513;">Retry</a>
+            </body>
+            </html>
+        `);
+    }
 });
 
 // ✅ SIMPLE TEST PAGE - Enhanced for deployment
@@ -293,11 +1057,20 @@ app.get('/test', (req, res) => {
                     <p><strong>Node.js:</strong> ${process.version}</p>
                     <p><strong>Platform:</strong> ${process.platform}</p>
                 </div>
+
+                <div class="info-box">
+                    <h3>🎯 Admin & Business Tools:</h3>
+                    <p><strong>Admin Dashboard:</strong> <a href="/admin" target="_blank">/admin</a> - View orders & sales</p>
+                    <p><strong>Sales Reports:</strong> <a href="/admin/sales-report" target="_blank">/admin/sales-report</a> - Beautiful analytics</p>
+                    <p><strong>All Orders:</strong> <a href="/admin/orders" target="_blank">/admin/orders</a> - Complete order management</p>
+                </div>
                 
                 <div class="btn-grid">
+                    <a href="/admin" class="btn" target="_blank">Admin Dashboard</a>
+                    <a href="/admin/sales-report" class="btn" target="_blank">Sales Report</a>
+                    <a href="/admin/orders" class="btn" target="_blank">All Orders</a>
                     <a href="/api/health" class="btn">Health Check API</a>
                     <a href="/api/products" class="btn">Products API</a>
-                    <a href="/api/orders" class="btn">Orders API</a>
                     <a href="/" class="btn">Main Website</a>
                 </div>
                 
@@ -388,12 +1161,21 @@ app.get('/', (req, res) => {
                     <p><strong>Note:</strong> Frontend files (index.html) not found in expected locations.</p>
                     <p>This is normal if you're only deploying the backend API.</p>
                 </div>
+
+                <div style="background: #E8F5E8; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <h3>🎯 Business Tools Available:</h3>
+                    <p><a href="/admin" style="color: #8B4513; font-weight: bold;">Admin Dashboard</a> - View orders & sales reports</p>
+                    <p><a href="/admin/sales-report" style="color: #8B4513; font-weight: bold;">Sales Reports</a> - Beautiful analytics dashboard</p>
+                    <p><a href="/admin/orders" style="color: #8B4513; font-weight: bold;">All Orders</a> - Complete order management</p>
+                </div>
                 
                 <p>Available endpoints:</p>
                 <div style="margin: 20px 0;">
+                    <a href="/admin" class="btn">Admin Dashboard</a>
+                    <a href="/admin/sales-report" class="btn">Sales Report</a>
+                    <a href="/admin/orders" class="btn">All Orders</a>
                     <a href="/test" class="btn">Test Page</a>
                     <a href="/api/health" class="btn">Health Check</a>
-                    <a href="/api/products" class="btn">Products API</a>
                 </div>
                 
                 <p style="margin-top: 30px; color: #666;">
@@ -471,6 +1253,7 @@ app.get('/api/orders', (req, res) => {
     }
 });
 
+// ✅ UPDATED ORDERS API WITH TERMINAL NOTIFICATIONS
 app.post('/api/orders', validateOrder, (req, res) => {
     try {
         console.log('🛒 Received new order from:', req.body.customerInfo?.email);
@@ -489,10 +1272,30 @@ app.post('/api/orders', validateOrder, (req, res) => {
         orders.push(newOrder);
         
         if (writeData(ordersFile, orders)) {
-            console.log(`✅ Order ${orderId} saved successfully`);
+            // ✅ ORDER NOTIFICATIONS SA TERMINAL
+            console.log('\n🎉🎉🎉 NEW COFFEE ORDER! 🎉🎉🎉');
+            console.log('═══════════════════════════════════════════════');
+            console.log(`📦 Order ID: ${orderId}`);
+            console.log(`👤 Customer: ${newOrder.customerInfo?.name || 'N/A'}`);
+            console.log(`📧 Email: ${newOrder.customerInfo?.email || 'N/A'}`);
+            console.log(`📞 Phone: ${newOrder.customerInfo?.phone || 'N/A'}`);
+            console.log(`🏠 Address: ${newOrder.customerInfo?.address || 'N/A'}`);
+            console.log(`💰 Total Amount: $${newOrder.total || 0}`);
+            console.log(`📅 Order Date: ${new Date().toLocaleString()}`);
+            console.log('📋 Order Items:');
             
-            // In a real application, you would send email confirmation here
-            // await sendOrderConfirmationEmail(newOrder);
+            if (newOrder.items && Array.isArray(newOrder.items)) {
+                newOrder.items.forEach((item, index) => {
+                    console.log(`   ${index + 1}. ${item.quantity}x ${item.name || item.product} - $${item.price || 0} each`);
+                });
+            } else {
+                console.log('   No items in order');
+            }
+            
+            console.log('═══════════════════════════════════════════════\n');
+            // ✅ END OF NOTIFICATIONS
+            
+            console.log(`✅ Order ${orderId} saved successfully`);
             
             res.status(201).json({
                 success: true,
@@ -528,9 +1331,6 @@ app.post('/api/contact', validateEmail, (req, res) => {
         contacts.push(newContact);
         
         if (writeData(contactsFile, contacts)) {
-            // In a real application, you would send email notification here
-            // await sendContactNotification(newContact);
-            
             res.status(201).json({
                 success: true,
                 message: 'Contact form submitted successfully! We will get back to you soon.',
@@ -575,9 +1375,6 @@ app.post('/api/newsletter', validateEmail, (req, res) => {
         newsletter.push(newSubscriber);
         
         if (writeData(newsletterFile, newsletter)) {
-            // In a real application, you would send welcome email here
-            // await sendWelcomeEmail(email, name);
-            
             res.status(201).json({
                 success: true,
                 message: 'Successfully subscribed to our newsletter! Welcome to the Unforgettable Coffee family!'
@@ -657,13 +1454,19 @@ const server = app.listen(PORT, () => {
     console.log('📍 PORT: ' + PORT);
     console.log('🌐 URL: http://localhost:' + PORT);
     console.log('🔗 API: http://localhost:' + PORT + '/api');
-    console.log('🛒 Orders: http://localhost:' + PORT + '/api/orders');
+    console.log('📊 ADMIN: http://localhost:' + PORT + '/admin');
+    console.log('📈 SALES UI: http://localhost:' + PORT + '/admin/sales-report');
+    console.log('📦 ORDERS UI: http://localhost:' + PORT + '/admin/orders');
+    console.log('🛒 Orders API: http://localhost:' + PORT + '/api/orders');
     console.log('📧 Contact: http://localhost:' + PORT + '/api/contact');
     console.log('📬 Newsletter: http://localhost:' + PORT + '/api/newsletter');
     console.log('🏥 Health: http://localhost:' + PORT + '/api/health');
     console.log('🧪 Test: http://localhost:' + PORT + '/test');
     console.log('✅ SERVER READY FOR DEPLOYMENT!');
     console.log('============================================\n');
+    
+    // Generate initial sales report
+    generateSalesReport();
 });
 
 // Handle uncaught exceptions
