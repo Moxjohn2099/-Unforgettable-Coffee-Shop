@@ -1526,8 +1526,8 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
-// ✅ RAILWAY FIX: Updated server startup with dynamic URLs
-const server = app.listen(PORT, '0.0.0.0', () => {
+// ✅ RAILWAY FIX: UPDATED SERVER STARTUP WITH DYNAMIC URLS
+app.listen(PORT, '0.0.0.0', () => {
     console.log('\n🎊 ============================================');
     console.log('🚀 UNFORGETTABLE COFFEE SHOP SERVER');
     console.log('📍 PORT: ' + PORT);
@@ -1552,16 +1552,12 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
     console.error('🚨 Uncaught Exception:', error);
-    server.close(() => {
-        process.exit(1);
-    });
+    process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error('🚨 Unhandled Rejection at:', promise, 'reason:', reason);
-    server.close(() => {
-        process.exit(1);
-    });
+    process.exit(1);
 });
 
 console.log('✅ Server setup completed - Ready to start...');
